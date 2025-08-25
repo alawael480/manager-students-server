@@ -5,6 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+  "server": "nodemon server/index.js",
+  "client": "npm start --prefix client",
     "dev": "nodemon server.js",
     "start": "node dist/server.js",
     "build": "tsc"
