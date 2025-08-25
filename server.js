@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 
 import studentRoutes from './routes/studentsRoute.js';
 import quizRoutes from './routes/quizRoute.js';
@@ -15,9 +15,8 @@ import practicalQuizRoutes from "./routes/practicalQuizRoute.js";
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// ✅ أول شيء: فعل الـ CORS على كل الطلبات
+// ✅ CORS أول شيء
 app.use(cors({
   origin: "https://e-school-client.vercel.app",
   credentials: true
@@ -32,7 +31,7 @@ app.options("*", cors({
 app.use(cookieParser());
 app.use(express.json());
 
-// ✅ مسارات الـ API
+// ✅ المسارات
 app.use('/api/students', studentRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/sabject', sabjectRoute);
@@ -43,11 +42,9 @@ app.use("/api/teacher", teacherRoute);
 app.use("/api/practical-notes", practicalNotesRoutes);
 app.use("/api/practical-quiz", practicalQuizRoutes);
 
-// ✅ نقطة فحص
+// نقطة فحص
 app.get("/", (req, res) => {
   res.send("✅ السيرفر يعمل بنجاح");
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+export default app; // ⬅ في Vercel لازم يكون export وليس listen
