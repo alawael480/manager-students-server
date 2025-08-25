@@ -20,6 +20,7 @@ app.use(express.json());
 
 app.use(cors({
   origin: "https://e-school-client.vercel.app",
+  origin: "http://localhost:3000",
   credentials: true
 }));
 // تسجيل مسارات الـ API
