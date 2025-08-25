@@ -1,19 +1,24 @@
 // controllers/authController.js
-import { supabase } from "../services/supabaseClient.js";
+import { pool } from "../config/db.js";
 
 export async function login(req, res) {
   const { student_id } = req.body;
 
-  const { data, error } = await supabase
-    .from("students")
-    .select("student_id, name, specialization")
-    .eq("student_id", student_id)
-    .single();
+  try {
+    const query = `
+      SELECT student_id, name, specialization
+      FROM students
+      WHERE student_id = $1
+      LIMIT 1
+    `;
+    const { rows } = await pool.query(query, [student_id]);
 
-  if (error || !data) {
-    return res.status(404).json({ message: "المعرف غير صحيح" });
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "المعرف غير صحيح" });
+    }
+
+    return res.json({ message: "تم تسجيل الدخول", student: rows[0] });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-
-  // نخزن المعرف محلياً في الواجهة؛ هنا نرجع فقط بيانات الطالب
-  return res.json({ message: "تم تسجيل الدخول", student: data });
 }
