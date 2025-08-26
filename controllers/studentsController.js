@@ -88,25 +88,21 @@ export const updateStudent = async (req, res) => {
 export const deleteStudent = async (req, res) => {
   try {
     const { student_id } = req.params;
-
-    // احذف من الجداول المرتبطة أولاً إذا ما عندك ON DELETE CASCADE
-    await pool.query(`DELETE FROM attendance WHERE student_id = $1, [student_id]`);
-    await pool.query(`DELETE FROM notes WHERE student_id = $1, [student_id]`);
-    await pool.query(`DELETE FROM quizzes WHERE student_id = $1, [student_id]`);
-
-    // احذف الطالب نفسه
-    const { rows } = await pool.query(
-      `DELETE FROM students WHERE student_id = $1 RETURNING *`,
-      [student_id]
-    );
+    const query = `
+      DELETE FROM students 
+      WHERE student_id = $1
+      RETURNING *
+    `;
+    
+    const { rows } = await pool.query(query, [student_id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ message: '❌ لم يتم العثور على الطالب' });
     }
 
-    res.status(200).json({
+    res.status(200).json({ 
       message: "✅ تم حذف الطالب نهائيًا من القاعدة",
-      deletedStudent: rows[0]
+      deletedStudent: rows[0] 
     });
   } catch (err) {
     console.error("❌ خطأ في الحذف:", err.message);
