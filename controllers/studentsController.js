@@ -88,21 +88,21 @@ export const updateStudent = async (req, res) => {
 // حذف الطلاب 
 export const deleteStudent = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { student_id } = req.params;
     const query = `
       DELETE FROM students 
-      WHERE id = $1
+      WHERE student_id = $1
       RETURNING *
     `;
     
-    const { rows } = await pool.query(query, [id]);
+    const { rows } = await pool.query(query, [student_id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ message: '❌ لم يتم العثور على الطالب' });
     }
 
     res.status(200).json({ 
-      message: "✅ تم حذف الطالب بنجاح",
+      message: "✅ تم حذف الطالب نهائيًا من القاعدة",
       deletedStudent: rows[0] 
     });
   } catch (err) {

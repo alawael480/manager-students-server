@@ -82,7 +82,7 @@ export const updateAttendance = async (req, res) => {
     `;
     const values = [student_id, attendance_date, status, id];
     const { rows } = await pool.query(query, values);
-    res.status(200).json({ data: rows });
+    res.status(200).json({ data: rows[0] });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
