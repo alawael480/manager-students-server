@@ -8,15 +8,20 @@ export async function getStudentData(req, res) {
     const query = `
   SELECT 
   s.*,
-  COALESCE(json_agg(DISTINCT a) FILTER (WHERE a.id IS NOT NULL), '[]') AS attendance,
-  COALESCE(json_agg(DISTINCT n) FILTER (WHERE n.id IS NOT NULL), '[]') AS notes,
-  COALESCE(json_agg(DISTINCT q) FILTER (WHERE q.id IS NOT NULL), '[]') AS quizzes
+  COALESCE(
+    (SELECT json_agg(a) FROM attendance a WHERE a.student_id = s.student_id),
+    '[]'
+  ) AS attendance,
+  COALESCE(
+    (SELECT json_agg(n) FROM notes n WHERE n.student_id = s.student_id),
+    '[]'
+  ) AS notes,
+  COALESCE(
+    (SELECT json_agg(q) FROM quizzes q WHERE q.student_id = s.student_id),
+    '[]'
+  ) AS quizzes
 FROM students s
-LEFT JOIN attendance a ON a.student_id = s.student_id
-LEFT JOIN notes n ON n.student_id = s.student_id
-LEFT JOIN quizzes q ON q.student_id = s.student_id
 WHERE s.student_id = $1
-GROUP BY s.student_id
 LIMIT 1;
 `;
 
