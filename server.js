@@ -19,8 +19,9 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use(cors({
-  origin: "https://e-school-client.vercel.app",
-  origin: "http://localhost:3000",
+  origin:["https://e-school-client.vercel.app",
+    "http://localhost:3000"] 
+   
 }));
 // تسجيل مسارات الـ API
 app.use('/api/students', studentRoutes);
