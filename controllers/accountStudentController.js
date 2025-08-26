@@ -6,19 +6,19 @@ export async function getStudentData(req, res) {
 
   try {
     const query = `
-      SELECT 
-        s.*,
-        COALESCE(json_agg(DISTINCT a) FILTER (WHERE a.attendance_id IS NOT NULL), '[]') AS attendance,
-        COALESCE(json_agg(DISTINCT n) FILTER (WHERE n.note_id IS NOT NULL), '[]') AS notes,
-        COALESCE(json_agg(DISTINCT q) FILTER (WHERE q.quiz_id IS NOT NULL), '[]') AS quizzes
-      FROM students s
-      LEFT JOIN attendance a ON a.student_id = s.student_id
-      LEFT JOIN notes n ON n.student_id = s.student_id
-      LEFT JOIN quizzes q ON q.student_id = s.student_id
-      WHERE s.student_id = $1
-      GROUP BY s.student_id
-      LIMIT 1;
-    `;
+  SELECT 
+  s.*,
+  COALESCE(json_agg(DISTINCT a) FILTER (WHERE a.id IS NOT NULL), '[]') AS attendance,
+  COALESCE(json_agg(DISTINCT n) FILTER (WHERE n.id IS NOT NULL), '[]') AS notes,
+  COALESCE(json_agg(DISTINCT q) FILTER (WHERE q.id IS NOT NULL), '[]') AS quizzes
+FROM students s
+LEFT JOIN attendance a ON a.student_id = s.student_id
+LEFT JOIN notes n ON n.student_id = s.student_id
+LEFT JOIN quizzes q ON q.student_id = s.student_id
+WHERE s.student_id = $1
+GROUP BY s.student_id
+LIMIT 1;
+`;
 
     const { rows } = await pool.query(query, [student_id]);
 

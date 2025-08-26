@@ -5,7 +5,6 @@ import {
   getTeacherProfile,
   updateTeacherProfile
 } from "../controllers/teacherController.js";
-import { verifyAuth } from "../middleware/authMidleware.js";
 
 const router = express.Router();
 
