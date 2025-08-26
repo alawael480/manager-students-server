@@ -84,7 +84,7 @@ export const updateStudent = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
+console.log(req.params)
 // حذف الطلاب 
 export const deleteStudent = async (req, res) => {
   try {
