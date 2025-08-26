@@ -90,7 +90,7 @@ export const deleteStudent = async (req, res) => {
     const { student_id } = req.params;
     const query = `
       DELETE FROM students 
-      WHERE student_id = $1
+      WHERE student_id = $2
       RETURNING *
     `;
     
