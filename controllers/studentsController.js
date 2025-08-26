@@ -90,13 +90,13 @@ export const deleteStudent = async (req, res) => {
     const { student_id } = req.params;
 
     // احذف من الجداول المرتبطة أولاً إذا ما عندك ON DELETE CASCADE
-    await pool.query(DELETE FROM attendance WHERE student_id = $1, [student_id]);
-    await pool.query(DELETE FROM notes WHERE student_id = $1, [student_id]);
-    await pool.query(DELETE FROM quizzes WHERE student_id = $1, [student_id]);
+    await pool.query(`DELETE FROM attendance WHERE student_id = $1, [student_id]`);
+    await pool.query(`DELETE FROM notes WHERE student_id = $1, [student_id]`);
+    await pool.query(`DELETE FROM quizzes WHERE student_id = $1, [student_id]`);
 
     // احذف الطالب نفسه
     const { rows } = await pool.query(
-      DELETE FROM students WHERE student_id = $1 RETURNING *,
+      `DELETE FROM students WHERE student_id = $1 RETURNING *`,
       [student_id]
     );
 
