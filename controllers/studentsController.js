@@ -88,12 +88,8 @@ export const updateStudent = async (req, res) => {
 export const deleteStudent = async (req, res) => {
   try {
     const { student_id } = req.params;
-    const query = `
-      DELETE FROM students 
-      WHERE student_id = $1
-      RETURNING *
-    `;
-    
+
+    const query = 'DELETE FROM students WHERE student_id = $1 RETURNING *';
     const { rows } = await pool.query(query, [student_id]);
 
     if (rows.length === 0) {
