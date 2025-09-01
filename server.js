@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use(cors({
-  origin:["https://e-school-client.vercel.app",
+  origin:["https://manager-students-client.vercel.app",
     "http://localhost:3000"] ,
     methods:["GET","POST", "PUT","DELETE"]
    
