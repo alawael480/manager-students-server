@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-import { pool } from '../config/db.js';
+import { v4 as uuidv4 } from "uuid";
+import { pool } from "../config/db.js";
 
 // 1) إرجاع كل الملاحظات
 export const getAllQuiz = async (req, res) => {
@@ -8,12 +8,12 @@ export const getAllQuiz = async (req, res) => {
       SELECT * FROM quizzes 
       ORDER BY quiz_date DESC
     `;
-    
+
     const { rows } = await pool.query(query);
 
     return res.status(200).json({
-      message: '✅ تم جلب جميع الملاحظات بنجاح',
-      data: rows
+      message: "✅ تم جلب جميع الملاحظات بنجاح",
+      data: rows,
     });
   } catch (error) {
     console.error("PostgreSQL select all error:", error);
@@ -31,16 +31,18 @@ export const getQuizByStudent = async (req, res) => {
       WHERE student_id = $1
       ORDER BY quiz_date DESC
     `;
-    
+
     const { rows } = await pool.query(query, [student_id]);
 
     if (!rows || rows.length === 0) {
-      return res.status(404).json({ message: '❌ لا توجد ملاحظات لهذا الطالب' });
+      return res
+        .status(404)
+        .json({ message: "❌ لا توجد ملاحظات لهذا الطالب" });
     }
 
     return res.status(200).json({
-      message: '✅ تم جلب الملاحظات بنجاح',
-      data: rows
+      message: "✅ تم جلب الملاحظات بنجاح",
+      data: rows,
     });
   } catch (error) {
     console.error("PostgreSQL select by student error:", error);
@@ -50,13 +52,7 @@ export const getQuizByStudent = async (req, res) => {
 
 // 3) إضافة ملاحظة جديدة
 export const createQuiz = async (req, res) => {
-  const {
-    student_id,
-    quiz_title,
-    quiz_name,
-    quiz_date,
-    quiz_grade
-  } = req.body;
+  const { student_id, quiz_title, quiz_name, quiz_date, quiz_grade } = req.body;
 
   const id = uuidv4();
 
@@ -66,13 +62,20 @@ export const createQuiz = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
-    
-    const values = [id, student_id, quiz_title, quiz_name, quiz_date, quiz_grade];
+
+    const values = [
+      id,
+      student_id,
+      quiz_title,
+      quiz_name,
+      quiz_date,
+      quiz_grade,
+    ];
     const { rows } = await pool.query(query, values);
 
     return res.status(201).json({
-      message: '✅ تم إضافة الملاحظة بنجاح',
-      data: rows[0]
+      message: "✅ تم إضافة الملاحظة بنجاح",
+      data: rows[0],
     });
   } catch (error) {
     console.error("PostgreSQL insert error:", error);
@@ -81,39 +84,48 @@ export const createQuiz = async (req, res) => {
 };
 
 // 4) تعديل ملاحظة (أو ملاحظات) حسب student_id
-export const updateQuizByStudent = async (req, res) => {
-  const { student_id } = req.params;
-  const {
-    quiz_title,
-    quiz_name,
-    quiz_date,
-    quiz_grade
-  } = req.body;
+export const updateQuiz = async (req, res) => {
+  const { id } = req.params;
+  const { quiz_title, quiz_name, quiz_date, quiz_grade, type, student_id } =
+    req.body;
 
   try {
     const query = `
       UPDATE quizzes 
-      SET quiz_title = $1, 
-          quiz_name = $2, 
-          quiz_date = $3, 
-          quiz_grade = $4
-      WHERE student_id = $5
+      SET student_id = $1,
+          quiz_title = $2, 
+          quiz_name = $3, 
+          quiz_date = $4, 
+          quiz_grade = $5,
+          type = $6
+      WHERE id = $7
       RETURNING *
     `;
-    
-    const values = [quiz_title, quiz_name, quiz_date, quiz_grade, student_id];
+
+    const values = [
+      student_id,
+      quiz_title,
+      quiz_name,
+      quiz_date,
+      quiz_grade,
+      type,
+      id,
+    ];
     const { rows } = await pool.query(query, values);
 
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "❌ لم يتم العثور على الكويز" });
+    }
+
     return res.status(200).json({
-      message: '✅ تم تحديث الملاحظات بنجاح',
-      data: rows
+      message: "✅ تم تحديث الكويز بنجاح",
+      data: rows[0],
     });
   } catch (error) {
     console.error("PostgreSQL update error:", error);
     return res.status(500).json({ message: error.message });
   }
 };
-
 // 5) حذف/مسح ملاحظة حسب student_id
 // حذف كل الكويزات الخاصة بطالب
 export const deleteQuizByStudent = async (req, res) => {
@@ -125,12 +137,12 @@ export const deleteQuizByStudent = async (req, res) => {
       WHERE student_id = $1
       RETURNING *
     `;
-    
+
     const { rows } = await pool.query(query, [student_id]);
 
     return res.status(200).json({
-      message: '🗑 تم مسح ملاحظات الطالب بنجاح',
-      data: rows
+      message: "🗑 تم مسح ملاحظات الطالب بنجاح",
+      data: rows,
     });
   } catch (error) {
     console.error("PostgreSQL delete error:", error);
@@ -148,12 +160,12 @@ export const deleteQuiz = async (req, res) => {
       WHERE id = $1
       RETURNING *
     `;
-    
+
     const { rows } = await pool.query(query, [id]);
 
     return res.status(200).json({
-      message: '🗑 تم حذف الملاحظة نهائياً بنجاح',
-      data: rows
+      message: "🗑 تم حذف الملاحظة نهائياً بنجاح",
+      data: rows,
     });
   } catch (error) {
     console.error("PostgreSQL delete error:", error);
